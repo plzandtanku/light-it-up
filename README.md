@@ -1,2 +1,2 @@
 # light-it-up
-Light Up Game using React JS
+Light Up game using React JS
