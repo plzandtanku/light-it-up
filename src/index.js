@@ -124,17 +124,19 @@ class Game extends React.Component {
 
 	colorDisplay(i) {
 		this.flipColor(i);
-		if ((i+1) % this.state.x !== 0){
+		let y = parseInt(this.state.y, 10);
+//		console.log(i+" "+this.state.x+" "+this.state.y);
+		if ((i+1) % this.state.y !== 0){
 			this.flipColor(i+1);
 		}
-		if (i % this.state.x !== 0){
+		if (i % this.state.y !== 0){
 			this.flipColor(i-1);
 		}
-		if (i >= this.state.x) {
-			this.flipColor(i-this.state.y);
+		if (i >= this.state.y) {
+			this.flipColor(i-y);
 		}
 		if (i <= ((this.state.y*this.state.x) - this.state.x)) {
-			this.flipColor(i+this.state.y);
+			this.flipColor(i+y);
 		}
 	}
 
