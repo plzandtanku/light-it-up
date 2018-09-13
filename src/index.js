@@ -125,8 +125,6 @@ class Game extends React.Component {
 	colorDisplay(i) {
 		this.flipColor(i);
 		if ((i+1) % this.state.x !== 0){
-			console.log(i+1);
-			console.log(this.state.x);
 			this.flipColor(i+1);
 		}
 		if (i % this.state.x !== 0){
@@ -172,25 +170,25 @@ class Game extends React.Component {
 	render() {
 		const history = this.state.history;
 		const current = history[this.state.stepNumber];
-		const winner = calculateWinner(current.squares);
+//		const winner = calculateWinner(current.squares);
 
-		const moves = history.map((step, move) => {
-			const desc = move ?
-				'Go to move #' + move :
-				'Go to game start';
-			return (
-				<li key={move}>
-				<button onClick={() => this.jumpTo(move)}>{desc}</button>
-				</li>
-			);
-		});
-
-		let status;
-		if (winner) {
-			status = "Winner: " + winner;
-		} else {
-			status = "Next player: " + (this.state.xIsNext ? "X" : "O");
-		}
+//		const moves = history.map((step, move) => {
+//			const desc = move ?
+//				'Go to move #' + move :
+//				'Go to game start';
+//			return (
+//				<li key={move}>
+//				<button onClick={() => this.jumpTo(move)}>{desc}</button>
+//				</li>
+//			);
+//		});
+//
+//		let status;
+//		if (winner) {
+//			status = "Winner: " + winner;
+//		} else {
+//			status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+//		}
 
 		return (
 			<div className="game">
