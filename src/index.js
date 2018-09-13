@@ -13,14 +13,14 @@ function Square(props) {
 }
 
 class Config extends React.Component {
-	setX(event) {
+	setRows(event) {
 		let coord = event.target.value;
-		this.props.onXChange(coord);
+		this.props.onRowChange(coord);
 	}
 
-	setY(event) {
+	setCols(event) {
 		let coord = event.target.value;
-		this.props.onYChange(coord);
+		this.props.onColChange(coord);
 	}
 	setColor(event) {
 		let color = event.target.value;
@@ -30,12 +30,13 @@ class Config extends React.Component {
 	render() {
 		return (
 			<div>
-				<p>{"x"}</p>
-				<input type="number" value={this.props.x} onChange={this.setX.bind(this)} />
-				<p>{"y"}</p>
-				<input type="number" value={this.props.y} onChange={this.setY.bind(this)} />
-				<p>{"color"}</p>
-				<input type="color" onChange={this.setColor.bind(this)} />
+				<h4> Configurations </h4>
+				<label htmlFor="rows"># of rows</label>
+				<input type="number" id="rows" value={this.props.rows} onChange={this.setRows.bind(this)} />
+				<label htmlFor="cols"># of columns</label>
+				<input type="number" id="cols" value={this.props.cols} onChange={this.setCols.bind(this)} />
+				<label htmlFor="color">fill color</label>
+				<input type="color" id="color" value={this.props.color} onChange={this.setColor.bind(this)} />
 			</div>
 		);
 
@@ -54,8 +55,8 @@ class Grid extends React.Component {
 
 	render() {
 		let gridRender = [];
-		let x = this.props.x;
-		let y = this.props.y;
+		let x = this.props.rows;
+		let y = this.props.cols;
 		let c = 0;
 		for (let i=0; i<x; i++) {	
 			let col = [];
@@ -80,34 +81,34 @@ class Grid extends React.Component {
 class Game extends React.Component {
 	constructor(props) {
 		super(props);
-		let defaultX = 5;
-		let defaultY = 5;
+		let defaultRows = 5;
+		let defaultCols = 5;
 		this.state = {
 			history: [
 				{
 					squares: Array(5*5).fill(null)
 				}
 			],
-			squares2: Array(defaultX*defaultY).fill('white'),
+			squares2: Array(defaultRows*defaultCols).fill('white'),
 			stepNumber: 0,
 			xIsNext: true,
-			x: defaultX,
-			y: defaultY,
+			rows: defaultRows,
+			cols: defaultCols,
 			color: "black",
 		};
 	}
 
-	setX(x) {
+	setRows(rows) {
 		this.setState({
-			x: x,
-			squares2: Array(x*this.state.y).fill('white'),
+			rows: rows,
+			squares2: Array(rows*this.state.cols).fill('white'),
 		});
 	}
 
-	setY(y) {
+	setCols(cols) {
 		this.setState({
-			y: y,
-			squares2: Array(y*this.state.x).fill('white'),
+			cols: cols,
+			squares2: Array(cols*this.state.rows).fill('white'),
 		});
 	}
 
@@ -124,19 +125,19 @@ class Game extends React.Component {
 
 	colorDisplay(i) {
 		this.flipColor(i);
-		let y = parseInt(this.state.y, 10);
-//		console.log(i+" "+this.state.x+" "+this.state.y);
-		if ((i+1) % this.state.y !== 0){
+		let cols = parseInt(this.state.cols, 10);
+//		console.log(i+" "+this.state.rows+" "+this.state.cols);
+		if ((i+1) % this.state.cols !== 0){
 			this.flipColor(i+1);
 		}
-		if (i % this.state.y !== 0){
+		if (i % this.state.cols !== 0){
 			this.flipColor(i-1);
 		}
-		if (i >= this.state.y) {
-			this.flipColor(i-y);
+		if (i >= this.state.cols) {
+			this.flipColor(i-cols);
 		}
-		if (i <= ((this.state.y*this.state.x) - this.state.x)) {
-			this.flipColor(i+y);
+		if (i <= ((this.state.cols*this.state.rows) - this.state.rows)) {
+			this.flipColor(i+cols);
 		}
 	}
 
@@ -158,7 +159,7 @@ class Game extends React.Component {
 				}
 			]),
 			stepNumber: history.length,
-			xIsNext: !this.state.xIsNext
+			xIsNext: !this.state.rowsIsNext
 		});
 	}
 
@@ -189,15 +190,15 @@ class Game extends React.Component {
 //		if (winner) {
 //			status = "Winner: " + winner;
 //		} else {
-//			status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+//			status = "Next player: " + (this.state.rowsIsNext ? "X" : "O");
 //		}
 
 		return (
 			<div className="game">
 				<div className="game-board">
 					<Grid
-						x={this.state.x}
-						y={this.state.y}
+						rows={this.state.rows}
+						cols={this.state.cols}
 						squares2={this.state.squares2}
 						squares={current.squares}
 						onClick={i => this.handleClick(i)}
@@ -205,10 +206,10 @@ class Game extends React.Component {
 				</div>
 				<div className="game-config">
 					<Config
-						x={this.state.x}
-						y={this.state.y}
-						onXChange={(i) => this.setX(i)}
-						onYChange={(i) => this.setY(i)}
+						rows={this.state.rows}
+						cols={this.state.cols}
+						onRowChange={(i) => this.setRows(i)}
+						onColChange={(i) => this.setCols(i)}
 						setColor={(i) => this.setColor(i)}
 					/>
 				</div>

@@ -7,6 +7,18 @@ ol, ul {
   padding-left: 30px;
 }
 
+label {
+	padding-left: 5px;
+	padding-right: 5px;
+	display: block;
+}
+
+h4 {
+	text-decoration: underline;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
+
 .board-row:after {
   clear: both;
   content: "";
@@ -50,6 +62,8 @@ ol, ul {
 }
 
 .game-config {
+	border: 1px solid;
   margin-left: 20px;
+	display: inline-block;
 }
 
