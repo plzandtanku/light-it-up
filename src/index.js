@@ -31,9 +31,9 @@ class Config extends React.Component {
 		return (
 			<div>
 				<p>{"x"}</p>
-				<input type="number" onChange={this.setX.bind(this)} />
+				<input type="number" value={this.props.x} onChange={this.setX.bind(this)} />
 				<p>{"y"}</p>
-				<input type="number" onChange={this.setY.bind(this)} />
+				<input type="number" value={this.props.y} onChange={this.setY.bind(this)} />
 				<p>{"color"}</p>
 				<input type="color" onChange={this.setColor.bind(this)} />
 			</div>
@@ -74,25 +74,6 @@ class Grid extends React.Component {
 			{gridRender}
 			</div>
 		);
-		// return (
-		//   <div>
-		//     <div className="board-row">
-		//       {this.renderSquare(0)}
-		//       {this.renderSquare(1)}
-		//       {this.renderSquare(2)}
-		//     </div>
-		//     <div className="board-row">
-		//       {this.renderSquare(3)}
-		//       {this.renderSquare(4)}
-		//       {this.renderSquare(5)}
-		//     </div>
-		//     <div className="board-row">
-		//       {this.renderSquare(6)}
-		//       {this.renderSquare(7)}
-		//       {this.renderSquare(8)}
-		//     </div>
-		//   </div>
-		// );
 	}
 }
 
@@ -119,14 +100,14 @@ class Game extends React.Component {
 	setX(x) {
 		this.setState({
 			x: x,
-			squares2: Array(x*this.y).fill('white'),
+			squares2: Array(x*this.state.y).fill('white'),
 		});
 	}
 
 	setY(y) {
 		this.setState({
 			y: y,
-			squares2: Array(y*this.x).fill('white'),
+			squares2: Array(y*this.state.x).fill('white'),
 		});
 	}
 
@@ -136,15 +117,40 @@ class Game extends React.Component {
 		});
 	}
 
+	flipColor(i) {
+		const squares2 = this.state.squares2;
+		squares2[i] = squares2[i] === "white" ? this.state.color : "white";
+	}
+
+	colorDisplay(i) {
+		this.flipColor(i);
+		if ((i+1) % this.state.x !== 0){
+			console.log(i+1);
+			console.log(this.state.x);
+			this.flipColor(i+1);
+		}
+		if (i % this.state.x !== 0){
+			this.flipColor(i-1);
+		}
+		if (i >= this.state.x) {
+			this.flipColor(i-this.state.y);
+		}
+		if (i <= ((this.state.y*this.state.x) - this.state.x)) {
+			this.flipColor(i+this.state.y);
+		}
+	}
+
 	handleClick(i) {
 		const history = this.state.history.slice(0, this.state.stepNumber + 1);
 		const current = history[history.length - 1];
 		const squares = current.squares.slice();
 		if (calculateWinner(squares) || squares[i]) {
+			const squares2 = this.state.squares2;
+			squares2[i] = squares2[i] === "white" ? this.state.color : "white";
 			return;
 		}
-		const squares2 = this.state.squares2;
-		squares2[i] = squares2[i] === "white" ? this.state.color : "white";
+		this.colorDisplay(i);
+	
 		this.setState({
 			history: history.concat([
 				{
@@ -206,12 +212,14 @@ class Game extends React.Component {
 						setColor={(i) => this.setColor(i)}
 					/>
 				</div>
-			<div className="game-info">
-				<div>{status}</div>
-					<ol>{moves}</ol>
-				</div>
 			</div>
 		);
+//				<div className="game-info">
+//				<div>{status}</div>
+//					<ol>{moves}</ol>
+//				</div>
+//			</div>
+//		);
 	}
 }
 
