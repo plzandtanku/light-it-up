@@ -47,7 +47,7 @@ class Grid extends React.Component {
 	renderSquare(i) {
 		return (
 			<Square key={i}
-				value={this.props.squares2[i]}
+				value={this.props.squares[i]}
 				onClick={() => this.props.onClick(i)}
 			/>
 		);
@@ -85,42 +85,43 @@ class Game extends React.Component {
 		let defaultCols = 5;
 		this.state = {
 			history: [
-				{
-					squares: Array(5*5).fill(null)
-				}
 			],
-			squares2: Array(defaultRows*defaultCols).fill('white'),
+			squares: Array(defaultRows*defaultCols).fill('white'),
 			stepNumber: 0,
+			started: false,
 			xIsNext: true,
 			rows: defaultRows,
 			cols: defaultCols,
-			color: "black",
+			color: "#000000",
 		};
 	}
 
 	setRows(rows) {
 		this.setState({
 			rows: rows,
-			squares2: Array(rows*this.state.cols).fill('white'),
+			squares: Array(rows*this.state.cols).fill('white'),
+			started: false,
 		});
 	}
 
 	setCols(cols) {
 		this.setState({
 			cols: cols,
-			squares2: Array(cols*this.state.rows).fill('white'),
+			squares: Array(cols*this.state.rows).fill('white'),
+			started: false,
 		});
 	}
 
 	setColor(color) {
 		this.setState({
 			color: color,
+			started: false,
 		});
 	}
 
 	flipColor(i) {
-		const squares2 = this.state.squares2;
-		squares2[i] = squares2[i] === "white" ? this.state.color : "white";
+		const squares = this.state.squares;
+		squares[i] = squares[i] === "white" ? this.state.color : "white";
 	}
 
 	colorDisplay(i) {
@@ -142,27 +143,16 @@ class Game extends React.Component {
 	}
 
 	handleClick(i) {
-		const history = this.state.history.slice(0, this.state.stepNumber + 1);
-		const current = history[history.length - 1];
-		const squares = current.squares.slice();
-		if (calculateWinner(squares) || squares[i]) {
-			const squares2 = this.state.squares2;
-			squares2[i] = squares2[i] === "white" ? this.state.color : "white";
-			return;
-		}
+//		const history = this.state.history.slice(0, this.state.stepNumber + 1);
 		this.colorDisplay(i);
 	
 		this.setState({
-			history: history.concat([
-				{
-					squares: squares
-				}
-			]),
-			stepNumber: history.length,
-			xIsNext: !this.state.rowsIsNext
+//			stepNumber: history.length,
+//			xIsNext: !this.state.rowsIsNext
+			started: true,
 		});
 	}
-
+	
 	jumpTo(step) {
 		this.setState({
 			stepNumber: step,
@@ -171,36 +161,19 @@ class Game extends React.Component {
 	}
 
 	render() {
-		const history = this.state.history;
-		const current = history[this.state.stepNumber];
-//		const winner = calculateWinner(current.squares);
-
-//		const moves = history.map((step, move) => {
-//			const desc = move ?
-//				'Go to move #' + move :
-//				'Go to game start';
-//			return (
-//				<li key={move}>
-//				<button onClick={() => this.jumpTo(move)}>{desc}</button>
-//				</li>
-//			);
-//		});
-//
-//		let status;
-//		if (winner) {
-//			status = "Winner: " + winner;
-//		} else {
-//			status = "Next player: " + (this.state.rowsIsNext ? "X" : "O");
-//		}
-
+		let status = "";
+		if (this.state.started && isBlank(this.state.squares)) {
+			status = "Congrats you've cleared the board!";
+		} else {
+			status = "";
+		}
 		return (
 			<div className="game">
 				<div className="game-board">
 					<Grid
 						rows={this.state.rows}
 						cols={this.state.cols}
-						squares2={this.state.squares2}
-						squares={current.squares}
+						squares={this.state.squares}
 						onClick={i => this.handleClick(i)}
 					/>
 				</div>
@@ -208,11 +181,16 @@ class Game extends React.Component {
 					<Config
 						rows={this.state.rows}
 						cols={this.state.cols}
+						color={this.state.color}
 						onRowChange={(i) => this.setRows(i)}
 						onColChange={(i) => this.setCols(i)}
 						setColor={(i) => this.setColor(i)}
 					/>
 				</div>
+				<div className="game-info">
+					<div>{status}</div>
+				</div>
+
 			</div>
 		);
 //				<div className="game-info">
@@ -228,24 +206,9 @@ class Game extends React.Component {
 
 ReactDOM.render(<Game />, document.getElementById("root"));
 
-function calculateWinner(squares) {
-	const lines = [
-		[0, 1, 2],
-		[3, 4, 5],
-		[6, 7, 8],
-		[0, 3, 6],
-		[1, 4, 7],
-		[2, 5, 8],
-		[0, 4, 8],
-		[2, 4, 6]
-	];
-	for (let i = 0; i < lines.length; i++) {
-		const [a, b, c] = lines[i];
-		if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-			return squares[a];
-		}
+function isBlank(squares) {
+	for (let i in squares) {
+		if (squares[i] !== 'white') return false;
 	}
-	return null;
+	return true;
 }
-
-
